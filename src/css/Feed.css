@@ -4,15 +4,20 @@
 }
 
 .feed__inputContainer {
-    display: flex;
     background-color: white;
     padding: 10px;
     padding-bottom: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
+    
+}
+.input{
+    display: flex;
     justify-content: space-around;
 }
-
+.avatar__input{
+    display: flex;
+}
 .feed__input {
     border: 1px solid lightgray;
     border-radius: 30px;
@@ -38,5 +43,9 @@
 
 .feed__input>form>button {
     display: none;
+}
+.feed__inputOptions{
+    display: flex;
+    justify-content: space-evenly;
 }
 
