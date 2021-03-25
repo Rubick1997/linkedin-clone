@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/Feed.css";
 import { Avatar } from "@material-ui/core";
 import InputOption from "./InputOption";
@@ -7,13 +7,37 @@ import YouTubeIcon from "@material-ui/icons/YouTube";
 import EventIcon from "@material-ui/icons/Event";
 import CalendarViewDayIcon from "@material-ui/icons/CalendarViewDay";
 import Post from "./Post";
+import { db } from "./firebase";
+import firebase from "firebase";
+import moment from "moment";
 
 function Feed() {
 	const [posts, setPosts] = useState([]);
+	const [input, setInput] = useState("");
+	useEffect(() => {
+		db.collection("posts")
+			.orderBy("timestamp", "desc")
+			.onSnapshot((snapshot) =>
+				setPosts(
+					snapshot.docs.map((doc) => ({
+						id: doc.id,
+						data: doc.data(),
+					}))
+				)
+			);
+	}, []);
 
 	const sendPost = (e) => {
 		e.preventDefault();
-    };
+		db.collection("posts").add({
+			name: "Rustam Kolumbayev",
+			description: "This is a test",
+			message: input,
+			photoUrl: "",
+			timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+		});
+		setInput("");
+	};
 
 	return (
 		<div className='feed'>
@@ -22,7 +46,12 @@ function Feed() {
 					<Avatar className='avatar__input' />
 					<div className='feed__input'>
 						<form>
-							<input type='text' placeholder='Start a post' />
+							<input
+								type='text'
+								value={input}
+								onChange={(e) => setInput(e.target.value)}
+								placeholder='Start a post'
+							/>
 							<button type='submit' onClick={sendPost}>
 								Send
 							</button>
@@ -40,14 +69,18 @@ function Feed() {
 					/>
 				</div>
 			</div>
-			{posts.map((post) => (
-				<Post />
-			))}
-			<Post
-				name='Rustam Kolumbayev'
-				description='this is a test'
-				message='hey'
-			/>
+			{posts.map(
+				({ id, data: { name, description, message, photoUrl, timestamp } }) => (
+					<Post
+						key={id}
+						name={name}
+						description={description}
+						message={message}
+						photoUrl={photoUrl}
+						time={moment(new Date(timestamp?.toDate()).toUTCString()).fromNow()}
+					/>
+				)
+			)}
 		</div>
 	);
 }

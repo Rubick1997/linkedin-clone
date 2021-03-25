@@ -7,7 +7,7 @@ import ChatOutlinedIcon from "@material-ui/icons/ChatOutlined";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
 
-function Post({ name, description, message, photoUrl }) {
+function Post({ name, description, message, photoUrl,time }) {
 	return (
 		<div className='post'>
 			<div className='post__header'>
@@ -15,6 +15,7 @@ function Post({ name, description, message, photoUrl }) {
 				<div className='post__info'>
 					<h2>{name}</h2>
 					<p>{description}</p>
+					<p>{time}</p>
 				</div>
 			</div>
 			<div className='post__body'>
