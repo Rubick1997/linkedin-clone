@@ -10,8 +10,11 @@ import Post from "./Post";
 import { db } from "./firebase";
 import firebase from "firebase";
 import moment from "moment";
-
+import { useSelector } from "react-redux";
+import { selectUser } from "./features/userSlice";
+import FlipMove from "react-flip-move";
 function Feed() {
+	const user = useSelector(selectUser);
 	const [posts, setPosts] = useState([]);
 	const [input, setInput] = useState("");
 	useEffect(() => {
@@ -30,10 +33,10 @@ function Feed() {
 	const sendPost = (e) => {
 		e.preventDefault();
 		db.collection("posts").add({
-			name: "Rustam Kolumbayev",
-			description: "This is a test",
+			name: user.displayName,
+			description: user.email,
 			message: input,
-			photoUrl: "",
+			photoUrl: user.photoUrl || "",
 			timestamp: firebase.firestore.FieldValue.serverTimestamp(),
 		});
 		setInput("");
@@ -43,7 +46,9 @@ function Feed() {
 		<div className='feed'>
 			<div className='feed__inputContainer'>
 				<div className='input'>
-					<Avatar className='avatar__input' />
+					<Avatar className='avatar__input' src={user?.photoUrl}>
+						{user.displayName[0]}
+					</Avatar>
 					<div className='feed__input'>
 						<form>
 							<input
@@ -69,18 +74,25 @@ function Feed() {
 					/>
 				</div>
 			</div>
-			{posts.map(
-				({ id, data: { name, description, message, photoUrl, timestamp } }) => (
-					<Post
-						key={id}
-						name={name}
-						description={description}
-						message={message}
-						photoUrl={photoUrl}
-						time={moment(new Date(timestamp?.toDate()).toUTCString()).fromNow()}
-					/>
-				)
-			)}
+			<FlipMove>
+				{posts.map(
+					({
+						id,
+						data: { name, description, message, photoUrl, timestamp },
+					}) => (
+						<Post
+							key={id}
+							name={name}
+							description={description}
+							message={message}
+							photoUrl={photoUrl}
+							time={moment(
+								new Date(timestamp?.toDate()).toUTCString()
+							).fromNow()}
+						/>
+					)
+				)}
+			</FlipMove>
 		</div>
 	);
 }
